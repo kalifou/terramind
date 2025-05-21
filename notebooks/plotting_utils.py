@@ -40,7 +40,7 @@ def rgb_smooth_quantiles(array, tolerance=0.02, scaling=0.5, default=2000):
     return array
 
 
-def s2_to_rgb(data, smooth_quantiles=True):
+def s2_to_rgb(data, smooth_quantiles=False):
     if isinstance(data, torch.Tensor):
         # to numpy
         data = data.clone().cpu().numpy()
@@ -111,6 +111,54 @@ def s1_power_to_rgb(data):
     return rgb
 
 
+def dem_to_rgb(data, cmap='BrBG_r', buffer=5):
+    if isinstance(data, torch.Tensor):
+        # to numpy
+        data = data.clone().cpu().numpy()
+    while len(data.shape) > 2:
+        # Remove batch dim etc.
+        data = data[0]
+
+    # Add 10m buffer to highlight flat areas
+    data_min, data_max = data.min(), data.max()
+    data_min -= buffer
+    data_max += buffer
+    data = (data - data_min) / (data_max - data_min + 1e-6)
+
+    rgb = plt.get_cmap(cmap)(data)[:, :, :3]
+    rgb = (rgb * 255).round().clip(0, 255).astype(np.uint8)
+    return rgb
+
+
+def ndvi_to_rgb(data, cmap='RdYlGn'):
+    if isinstance(data, torch.Tensor):
+        # to numpy
+        data = data.clone().cpu().numpy()
+    while len(data.shape) > 2:
+        # Remove batch dim etc.
+        data = data[0]
+
+    # Scale NDVI to 0-1
+    data = (data + 1) / 2
+
+    rgb = plt.get_cmap(cmap)(data)[:, :, :3]
+    rgb = (rgb * 255).round().clip(0, 255).astype(np.uint8)
+    return rgb
+
+
+def lulc_to_rgb(data, cmap=lulc_cmap, num_classes=10):
+    while len(data.shape) > 2:
+        if data.shape[0] == num_classes:
+            data = data.argmax(axis=0)  # First dim are class logits
+        else:
+            # Remove batch dim
+            data = data[0]
+
+    rgb = cmap(data)[:, :, :3]
+    rgb = (rgb * 255).round().clip(0, 255).astype(np.uint8)
+    return rgb
+
+
 def coords_to_text(data):
     if isinstance(data, torch.Tensor):
         data = data.clone().cpu().numpy()
@@ -125,7 +173,7 @@ def coords_to_text(data):
         return f'lon={data[0]:.2f}, lat={data[1]:.2f}'
 
 
-def plot_s2(data, ax=None, smooth_quantiles=True, *args, **kwargs):
+def plot_s2(data, ax=None, smooth_quantiles=False, *args, **kwargs):
     rgb = s2_to_rgb(data, smooth_quantiles=smooth_quantiles)
 
     if ax is None:
