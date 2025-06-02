@@ -1,6 +1,7 @@
 [**Paper**](https://arxiv.org/abs/2504.11171) 
 | [**Hugging Face**](https://huggingface.co/ibm-esa-geospatial) 
-| [**Model Code**](https://github.com/IBM/terratorch/tree/main/terratorch/models/backbones/terramind) 
+| [**Website**](https://ibm.github.io/terramind/)
+| [**Model Code**](https://github.com/IBM/terratorch/tree/main/terratorch/models/backbones/terramind)
 | [**ESA Blog**](https://www.esa.int/Applications/Observing_the_Earth/ESA_and_IBM_collaborate_on_TerraMind)
 | [**IBM Blog**](https://research.ibm.com/blog/terramind-esa-earth-observation-model)
 | [**Challenge**](https://huggingface.co/spaces/ibm-esa-geospatial/challenge)
