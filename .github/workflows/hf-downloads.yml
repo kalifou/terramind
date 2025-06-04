@@ -1,0 +1,27 @@
+name: Update Hugging Face Downloads
+
+on:
+  schedule:
+    - cron: '0 0 * * 1'  # every Monday at 00:00 UTC
+  workflow_dispatch:  # allow manual trigger
+
+jobs:
+  update-downloads:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      - name: Fetch Hugging Face downloads
+        run: |
+          curl -s "https://huggingface.co/api/models/ibm-esa-geospatial/TerraMind-1.0-base?expand[]=downloads" |
+          jq '{schemaVersion:1, label:"downloads (30d)", message:(.downloads|tostring), color:"blue"}' > assets/hf_monthly_downloads.json
+
+      - name: Commit and push changes
+        run: |
+          git config user.name "github-actions"
+          git config user.email "github-actions@github.com"
+          git add hf_downloads.json
+          git commit -m "Update Hugging Face download stats" || echo "No changes"
+          git push
