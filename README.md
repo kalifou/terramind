@@ -1,10 +1,9 @@
-[**Paper**](https://arxiv.org/abs/2504.11171) 
-| [**Hugging Face**](https://huggingface.co/ibm-esa-geospatial) 
-| [**Website**](https://ibm.github.io/terramind/)
-| [**Model Code**](https://github.com/IBM/terratorch/tree/main/terratorch/models/backbones/terramind)
-| [**ESA Blog**](https://www.esa.int/Applications/Observing_the_Earth/ESA_and_IBM_collaborate_on_TerraMind)
-| [**IBM Blog**](https://research.ibm.com/blog/terramind-esa-earth-observation-model)
-| [**Challenge**](https://huggingface.co/spaces/ibm-esa-geospatial/challenge)
+[![Website](https://img.shields.io/badge/Official_Website-TerraMind-0F62FE?style=logo=github)](https://ibm.github.io/terramind/)
+[![arXiv](https://img.shields.io/badge/arXiv-2504.11171-b31b1b?style=logo=arxiv)](https://arxiv.org/abs/2504.11171)
+[![HuggingFace](https://img.shields.io/badge/Hugging_Face-IBM--ESA--Geospaital-FFD21E?style=logo=huggingface)](https://huggingface.co/ibm-esa-geospatial)
+[![Code](https://img.shields.io/badge/Model_code-TerraTorch-EE4B2B?style=logo=github)](https://github.com/IBM/terratorch/tree/main/terratorch/models/backbones/terramind)
+[![IBMblog](https://img.shields.io/badge/Blog-IBM-0F62FE)](https://research.ibm.com/blog/terramind-esa-earth-observation-model)
+[![ESAblog](https://img.shields.io/badge/Blog-ESA-113145)](https://www.esa.int/Applications/Observing_the_Earth/ESA_and_IBM_collaborate_on_TerraMind)
 
 # TerraMind 1.0
 
