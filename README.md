@@ -1,9 +1,13 @@
-[![Website](https://img.shields.io/badge/Official_Website-TerraMind-0F62FE?style=logo=github)](https://ibm.github.io/terramind/)
-[![arXiv](https://img.shields.io/badge/arXiv-2504.11171-b31b1b?style=logo=arxiv)](https://arxiv.org/abs/2504.11171)
-[![HuggingFace](https://img.shields.io/badge/Hugging_Face-IBM--ESA--Geospaital-FFD21E?style=logo=huggingface)](https://huggingface.co/ibm-esa-geospatial)
-[![Code](https://img.shields.io/badge/Model_code-TerraTorch-EE4B2B?style=logo=github)](https://github.com/IBM/terratorch/tree/main/terratorch/models/backbones/terramind)
+[![Website](https://img.shields.io/badge/Website-TerraMind-0F62FE)](https://ibm.github.io/terramind/)
+[![arXiv](https://img.shields.io/badge/arXiv-2504.11171-b31b1b?logo=arxiv)](https://arxiv.org/abs/2504.11171)
+[![HuggingFace](https://img.shields.io/badge/Hugging_Face-IBM--ESA--Geospaital-FFD21E?logo=huggingface)](https://huggingface.co/ibm-esa-geospatial)
+[![Downloads](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/IBM/terramind/webpage/assets/hf_monthly_downloads.json)](https://huggingface.co/ibm-esa-geospatial/TerraMind-1.0-base)
+[![Code](https://img.shields.io/badge/Model_code-TerraTorch-EE4B2B?logo=github)](https://github.com/IBM/terratorch/tree/main/terratorch/models/backbones/terramind)
 [![IBMblog](https://img.shields.io/badge/Blog-IBM-0F62FE)](https://research.ibm.com/blog/terramind-esa-earth-observation-model)
 [![ESAblog](https://img.shields.io/badge/Blog-ESA-113145)](https://www.esa.int/Applications/Observing_the_Earth/ESA_and_IBM_collaborate_on_TerraMind)
+[![Challenge](https://img.shields.io/badge/Website-Blue--sky_Challenge-0F62FE)](https://huggingface.co/spaces/ibm-esa-geospatial/challenge)
+
+[//]: # (Weekly updates of downloads. See .github/workflows/hf-downloads.yml for configuration.)
 
 # TerraMind 1.0
 

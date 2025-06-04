@@ -18,7 +18,7 @@ jobs:
       - name: Fetch Hugging Face downloads
         run: |
           curl -s "https://huggingface.co/api/models/ibm-esa-geospatial/TerraMind-1.0-base?expand[]=downloads" |
-          jq '{schemaVersion:1, label:"downloads (30d)", message:(.downloads|tostring), color:"blue"}' > assets/hf_monthly_downloads.json
+          jq '{schemaVersion:1, label:"Monthly downloads (TM-B)", message:(.downloads|tostring), color:"FFD21E"}' > assets/hf_monthly_downloads.json
 
       - name: Commit and push changes
         run: |
