@@ -14,16 +14,76 @@ jobs:
         uses: actions/checkout@v4
         with:
           ref: webpage
+          fetch-depth: 0
 
-      - name: Fetch Hugging Face downloads
+      - name: Install dependencies
+        run: pip install requests
+
+      - name: Fetch monthly downloads
         run: |
-          curl -s "https://huggingface.co/api/models/ibm-esa-geospatial/TerraMind-1.0-base?expand[]=downloads" |
-          jq '{schemaVersion:1, label:"Monthly downloads (TM-B)", message:(.downloads|tostring), color:"FFD21E"}' > assets/hf_monthly_downloads.json
+          python <<EOF
+          import requests, json
+          
+          url = "https://huggingface.co/api/models/ibm-esa-geospatial/TerraMind-1.0-base?expand[]=downloads"
+          try:
+              count = requests.get(url, timeout=10).json().get("downloads", 0)
+          except Exception as e:
+              print(f"Failed to fetch {model}: {e}")
+          
+          badge = {
+              "schemaVersion": 1,
+              "label": "Monthly downloads (TM-B)",
+              "message": str((count / 1000).round(1)) + "k",
+              "color": "FFD21E"
+          }
+
+          with open("assets/hf_monthly_downloads.json", "w") as f:
+              json.dump(badge, f, indent=2)
+          EOF
+
+      - name: Fetch total downloads of all models
+        run: |
+          python <<EOF
+          import requests, json
+
+          models = [
+              "TerraMind-1.0-base",
+              "TerraMind-1.0-large",
+              "TerraMind-1.0-Tokenizer-NDVI",
+              "TerraMind-1.0-Tokenizer-DEM",
+              "TerraMind-1.0-Tokenizer-LULC",
+              "TerraMind-1.0-Tokenizer-S1GRD",
+              "TerraMind-1.0-Tokenizer-S1RTC",
+              "TerraMind-1.0-Tokenizer-S2L2A"
+          ]
+
+          org = "ibm-esa-geospatial"
+          total = 0
+
+          for model in models:
+              url = f"https://huggingface.co/api/models/{org}/{model}?expand[]=downloadsAllTime"
+              try:
+                  count = requests.get(url, timeout=10).json().get("downloadsAllTime", 0)
+                  total += count
+              except Exception as e:
+                  print(f"Failed to fetch {model}: {e}")
+
+          badge = {
+              "schemaVersion": 1,
+              "label": "Total downloads (all models)",
+              "message": str((total / 1000).round(1)) + "k",
+              "color": "FFD21E"
+          }
+
+          with open("assets/hf_total_downloads.json", "w") as f:
+              json.dump(badge, f, indent=2)
+          EOF
 
       - name: Commit and push changes
         run: |
           git config user.name "github-actions"
           git config user.email "github-actions@github.com"
           git add assets/hf_monthly_downloads.json
+          git add assets/hf_total_downloads.json
           git commit -m "Update Hugging Face download stats" || echo "No changes"
           git push origin webpage
