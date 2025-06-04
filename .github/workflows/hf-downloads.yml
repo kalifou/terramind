@@ -25,15 +25,12 @@ jobs:
           import requests, json
           
           url = "https://huggingface.co/api/models/ibm-esa-geospatial/TerraMind-1.0-base?expand[]=downloads"
-          try:
-              count = requests.get(url, timeout=10).json().get("downloads", 0)
-          except Exception as e:
-              print(f"Failed to fetch {model}: {e}")
+          count = requests.get(url, timeout=10).json().get("downloads", 0)
           
           badge = {
               "schemaVersion": 1,
               "label": "Monthly downloads (TM-B)",
-              "message": str((count / 1000).round(1)) + "k",
+              "message": str(round(count / 1000, 1)) + "k",
               "color": "FFD21E"
           }
 
@@ -71,7 +68,7 @@ jobs:
           badge = {
               "schemaVersion": 1,
               "label": "Total downloads (all models)",
-              "message": str((total / 1000).round(1)) + "k",
+              "message": str(round(total / 1000, 1)) + "k",
               "color": "FFD21E"
           }
 
