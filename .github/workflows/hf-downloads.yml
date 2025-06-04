@@ -13,7 +13,7 @@ jobs:
       - name: Checkout repo
         uses: actions/checkout@v4
         with:
-          ref: website
+          ref: webpage
 
       - name: Fetch Hugging Face downloads
         run: |
@@ -26,4 +26,4 @@ jobs:
           git config user.email "github-actions@github.com"
           git add assets/hf_monthly_downloads.json
           git commit -m "Update Hugging Face download stats" || echo "No changes"
-          git push origin website
+          git push origin webpage
