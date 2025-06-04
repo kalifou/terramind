@@ -29,9 +29,9 @@ jobs:
           
           badge = {
               "schemaVersion": 1,
-              "label": "Monthly downloads (TM-B)",
-              "message": str(round(count / 1000, 1)) + "k",
-              "color": "FFD21E"
+              "label": "Downloads (TM-B)",
+              "message": f"{round(count / 1000, 1))}k/month",
+              "color": "FFD21E"  # HF color
           }
 
           with open("assets/hf_monthly_downloads.json", "w") as f:
@@ -68,8 +68,8 @@ jobs:
           badge = {
               "schemaVersion": 1,
               "label": "Total downloads (all models)",
-              "message": str(round(total / 1000, 1)) + "k",
-              "color": "FFD21E"
+              "message": f"{round(total / 1000, 1))}k",
+              "color": "FFD21E"  # HF color
           }
 
           with open("assets/hf_total_downloads.json", "w") as f:
