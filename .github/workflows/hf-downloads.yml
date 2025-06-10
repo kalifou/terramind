@@ -30,7 +30,7 @@ jobs:
           badge = {
               "schemaVersion": 1,
               "label": "Downloads (TM-B)",
-              "message": f"{round(count / 1000, 1))}k/month",
+              "message": f"{round(count / 1000, 1)}k/month",
               "color": "FFD21E"  # HF color
           }
 
