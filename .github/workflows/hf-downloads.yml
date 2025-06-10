@@ -68,7 +68,7 @@ jobs:
           badge = {
               "schemaVersion": 1,
               "label": "Total downloads (all models)",
-              "message": f"{round(total / 1000, 1))}k",
+              "message": f"{round(total / 1000, 1)}k",
               "color": "FFD21E"  # HF color
           }
 
