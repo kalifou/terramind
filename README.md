@@ -83,8 +83,9 @@ TerraMind can perform any-to-any generation based on varying combinations of inp
 You can test the generation capabilities with this notebook: [terramind_any_to_any_generation.ipynb](notebooks%2Fterramind_any_to_any_generation.ipynb).
 
 If you are only interested in generating a single modality from another one, [terramind_generation.ipynb](notebooks%2Fterramind_generation.ipynb) provides a simplified version of the generation code.
-
 We provide some examples images from the TerraMesh validation split in [examples/](examples).
+
+For larger tiles, you can used the tiled inference provided by TerraTorch which we demonstrate in [large_tile_generation.ipynb](notebooks%2Flarge_tile_generation.ipynb).
 
 ## Tokenizer
 
