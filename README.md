@@ -9,6 +9,9 @@
 
 [//]: # (Weekly updates of downloads. See .github/workflows/hf-downloads.yml for configuration.)
 
+### TerraMind has been accepted at ICCV 2025 🎉  
+We’re honored to present our work at one of the most prestigious conferences in computer vision. Stay tuned for more details!
+
 # TerraMind 1.0
 
 TerraMind is the first any-to-any generative foundation model for Earth Observation, build by IBM, ESA Φ-lab, and the FAST-EO project.
