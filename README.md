@@ -107,7 +107,7 @@ If you use TerraMind in your research, please cite the [TerraMind](https://arxiv
 @article{jakubik2025terramind,
   title={TerraMind: Large-Scale Generative Multimodality for Earth Observation},
   author={Jakubik, Johannes and Yang, Felix and Blumenstiel, Benedikt and Scheurer, Erik and Sedona, Rocco and Maurogiovanni, Stefano and Bosmans, Jente and Dionelis, Nikolaos and Marsocci, Valerio and Kopp, Niklas and others},
-  journal={arXiv preprint arXiv:2504.11171},
+  journal={ICCV'25},
   year={2025}
 }
 ```
