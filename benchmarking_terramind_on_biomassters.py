@@ -36,12 +36,12 @@ from lightning.pytorch.callbacks import RichProgressBar
               default=8,
               help='Batch size.')
 
-@click.option('--sensor', 
+@click.option("-sr",'--sensor', 
               type=str, 
               default="s2", 
               help='Sensor to use, among: {s1, s2}.')
 
-@click.option('--backbone_size', 
+@click.option("-bcsz",'--backbone_size', 
               type=str, 
               default="base", 
               help='Size of the terramind backbone, among: {base, large}.')
@@ -56,12 +56,12 @@ from lightning.pytorch.callbacks import RichProgressBar
               default=True,
               help='Activate test mode.')
 
-@click.option("-dpth", '--data_path', 
+@click.option("-pthd", '--data_path', 
               type=str, 
               default="data/subsample_biomasters_500/", 
               help='Path to Biomassters dataset')
 
-@click.option("-lpth", '--logs_path', 
+@click.option("-pthl", '--logs_path', 
               type=str, 
               default="results/terramind_on_biomassters/", 
               help='Path for saving the results and logs of the experiments.')
@@ -186,13 +186,13 @@ def main(max_epochs,
     
     
     # # By default, TerraTorch saves the model with the best validation loss. You can overwrite this by defining a custom ModelCheckpoint, e.g., saving the model with the highest validation mIoU.
-    # checkpoint_callback = pl.callbacks.ModelCheckpoint(
-    #     dirpath="output/terramind_base_biomassters/checkpoints/",
+    checkpoint_callback = pl.callbacks.ModelCheckpoint(
+        dirpath=path_to_save_logs + "/checkpoints/",
     #     mode="max",
     #     monitor="val/Multiclass_Jaccard_Index",  # Variable to monitor
     #     filename="best-mIoU",
-    #     save_weights_only=True,
-    # )
+        save_weights_only=True,
+    )
     
     # Lightning Trainer
     trainer = pl.Trainer(
@@ -200,8 +200,8 @@ def main(max_epochs,
         strategy="auto",
         logger=True,  # Uses TensorBoard by default
         max_epochs=max_epochs,  # For demos
-        #log_every_n_steps=1,
-        callbacks=[RichProgressBar(leave=True)],
+        log_every_n_steps=1,
+        callbacks=[checkpoint_callback, RichProgressBar(leave=True)],
         default_root_dir=path_to_save_logs,
     )
     
