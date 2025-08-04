@@ -53,7 +53,7 @@ from lightning.pytorch.callbacks import RichProgressBar
 
 @click.option("-tm",'--test_mode', 
               type=bool, 
-              default=True,
+              default=False,
               help='Activate test mode.')
 
 @click.option("-pthd", '--data_path', 

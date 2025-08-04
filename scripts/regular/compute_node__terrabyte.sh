@@ -12,19 +12,19 @@ batch_size=32
 dataset=/dss/dsshome1/04/di38jul/swattainer/temporary_rene/biomassters/
 log_dir=../../results/benchmkark/
 
-python benchmarking_terramind_on_biomassters.py \
+python ../../benchmarking_terramind_on_biomassters.py \
 -sr $sensor_i \
 -bcsz  $backbone_size \
 -me $max_epoch_i \
 -bs $batch_size \
 -pthd $dataset \
--pthl  $log_dir \ >> $backbone_size"__frozen__"$sensor_i$(date +"__%Y_%m_%d__%H_%M_%S")"_.out" 
+-pthl  $log_dir >> $backbone_size"__frozen__"$sensor_i$(date +"__%Y_%m_%d__%H_%M_%S")"_.out" 
 
-python benchmarking_terramind_on_biomassters.py \
+python ../../benchmarking_terramind_on_biomassters.py \
 -fzb \
 -sr $sensor_i \
 -bcsz  $backbone_size \
 -me $max_epoch_i \
 -bs $batch_size \
 -pthd $dataset \
--pthl  $log_dir \ >> $backbone_size"__not_frozen__"$sensor_i$(date +"__%Y_%m_%d__%H_%M_%S")"_.out" 
+-pthl  $log_dir >> $backbone_size"__not_frozen__"$sensor_i$(date +"__%Y_%m_%d__%H_%M_%S")"_.out" 
