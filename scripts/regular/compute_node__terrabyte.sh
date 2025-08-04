@@ -7,12 +7,14 @@ conda activate gruenblick_terramind
 sensor_i=$1
 backbone_size=$2
 
-max_epoch_i=10
+max_epoch_i=3
 batch_size=32
 dataset=/dss/dsshome1/04/di38jul/swattainer/temporary_rene/biomassters/
 log_dir=../../results/benchmkark/
 
 python ../../benchmarking_terramind_on_biomassters.py \
+-tm \
+-fzb \      
 -sr $sensor_i \
 -bcsz  $backbone_size \
 -me $max_epoch_i \
@@ -21,7 +23,8 @@ python ../../benchmarking_terramind_on_biomassters.py \
 -pthl  $log_dir >> $backbone_size"__frozen__"$sensor_i$(date +"__%Y_%m_%d__%H_%M_%S")"_.out" 
 
 python ../../benchmarking_terramind_on_biomassters.py \
--fzb \
+-tm \
+-no_fzb \
 -sr $sensor_i \
 -bcsz  $backbone_size \
 -me $max_epoch_i \
