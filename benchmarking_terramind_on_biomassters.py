@@ -46,14 +46,12 @@ from lightning.pytorch.callbacks import RichProgressBar
               default="base", 
               help='Size of the terramind backbone, among: {base, large}.')
 
-@click.option("-fzb/-no_fzb", #'--freeze_the_backbone', 
-              #type=bool, 
-              default=False,
+@click.option("-fzb", '--freeze_the_backbone', 
+              is_flag=True,
               help='Activate the freezing of the backbone while finetuning.')
 
-@click.option("-tm/-no_tm", #'--test_mode', 
-              #type=bool, 
-              default=False,
+@click.option("-tm", "--test_mode", 
+              is_flag=True,
               help='Activate test mode.')
 
 @click.option("-pthd", '--data_path', 
@@ -82,6 +80,7 @@ def main(max_epochs,
     print("max_epochs: {}".format(int(max_epochs)))
     print("batch_size: {}".format(int(batch_size)))
     print("test_mode: {}".format(int(test_mode)))
+    print("freeze_the_backbone: {}".format(int(freeze_the_backbone)))
     print("backbone_size: {}".format(backbone_size))
     print("data_path: {}".format(data_path))    
     print("logs_path: {}\n\n".format(logs_path))

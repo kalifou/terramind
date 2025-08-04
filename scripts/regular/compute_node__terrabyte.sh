@@ -24,7 +24,6 @@ python ../../benchmarking_terramind_on_biomassters.py \
 
 python ../../benchmarking_terramind_on_biomassters.py \
 -tm \
--no_fzb \
 -sr $sensor_i \
 -bcsz  $backbone_size \
 -me $max_epoch_i \
