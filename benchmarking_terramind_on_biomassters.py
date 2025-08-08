@@ -5,6 +5,7 @@ Created on Wed Jul  2 14:42:30 2025
 
 @author: trao_ka
 """
+import ipdb
 
 import click
 from datetime import datetime
@@ -21,6 +22,16 @@ import lightning.pytorch as pl
 from terratorch.tasks import PixelwiseRegressionTask
 
 from lightning.pytorch.callbacks import RichProgressBar
+
+TIM_MODALITIES_LIST = ['sen2', 'sen1', 'caption', 'sen1rtc', 
+                       'dem', 'lulc', 'ndvi', 'caption', 'coords'
+                       ]
+
+def list_of_str(arg):
+    result = list()
+    if len(arg) > 0:
+        result = list(map(str, arg.split(',')))
+    return result
 
 @click.command()
 
@@ -50,9 +61,14 @@ from lightning.pytorch.callbacks import RichProgressBar
               is_flag=True,
               help='Activate the freezing of the backbone while finetuning.')
 
-@click.option("-tm", "--test_mode", 
+@click.option("-tst", "--test_mode", 
               is_flag=True,
               help='Activate test mode.')
+
+@click.option("-ltim", "--list_of_tim_modalities", 
+              type=list_of_str, 
+              default="",
+              help='Activate Thinking in Modality (TiM).')
 
 @click.option("-pthd", '--data_path', 
               type=str, 
@@ -64,6 +80,15 @@ from lightning.pytorch.callbacks import RichProgressBar
               default="results/terramind_on_biomassters/", 
               help='Path for saving the results and logs of the experiments.')
 
+@click.option("-sd", '--seed', 
+              type=int, 
+              required=False, 
+              default=0,
+              help='Experimental seed.')
+
+
+
+
 def main(max_epochs, 
          batch_size, 
          sensor, 
@@ -71,22 +96,29 @@ def main(max_epochs,
          freeze_the_backbone, 
          test_mode, 
          data_path,
-         logs_path):
+         logs_path,
+         list_of_tim_modalities,
+         seed):
 
-    #import ipdb
-    #ipdb.set_trace(context=35)
     print("\n\nExperimental protocol:")
     print("sensor: {}".format(sensor))
     print("max_epochs: {}".format(int(max_epochs)))
     print("batch_size: {}".format(int(batch_size)))
-    print("test_mode: {}".format(int(test_mode)))
+    print("test_mode: {}".format(int(test_mode)))    
+    print("Thinking in Modality (TiM): {}".format(list_of_tim_modalities))
     print("freeze_the_backbone: {}".format(int(freeze_the_backbone)))
     print("backbone_size: {}".format(backbone_size))
+    print("seed: {}".format(int(seed)))    
     print("data_path: {}".format(data_path))    
     print("logs_path: {}\n\n".format(logs_path))
     
     assert backbone_size in ["base", "large"]
     assert sensor in ["s2", "s1"]
+    assert isinstance(test_mode, bool)
+    assert isinstance(freeze_the_backbone, bool)
+    assert isinstance(list_of_tim_modalities, list)
+    for tim_i in list_of_tim_modalities:
+        assert tim_i in TIM_MODALITIES_LIST
     
     num_of_channels = 10
     image_size = 256
@@ -105,33 +137,41 @@ def main(max_epochs,
         neck_indices = [2, 5, 8, 11] # indices for terramind_v1_base
     elif backbone_size == "large":
         neck_indices = [5, 11, 17, 23] # indices for terramind_v1_large
-        
+    
+    
     terramind_backone = "terramind_v1_" + backbone_size
     
+    model_args = {"backbone":terramind_backone,
+                "backbone_pretrained": True,
+                "backbone_modalities": backbone_modalities,
+                  # Necks 
+                  "necks": [
+                      {
+                          "name": "SelectIndices",
+                          "indices": neck_indices
+                      },
+                      {"name": "ReshapeTokensToImage",
+                       "remove_cls_token": False},  # TerraMind is trained without CLS token, which neads to be specified.
+                      {"name": "LearnedInterpolateToPyramidal"}  # Some decoders like UNet or UperNet expect hierarchical features. Therefore, we need to learn a upsampling for the intermediate embedding layers when using a ViT like TerraMind.
+                  ],
+                  "decoder": "UNetDecoder",
+                  "decoder_channels": [512, 256, 128, 64],
+                  }
+    
+    if list_of_tim_modalities != list():
+        terramind_backone += "_tim"
+        
+        model_args["backbone"] = terramind_backone
+        model_args["backbone_tim_modalities"] = list_of_tim_modalities
+    
+    #ipdb.set_trace(context=25)
+    
     regressor_model = PixelwiseRegressionTask(freeze_backbone=freeze_the_backbone,
-                                               model_args={"backbone":terramind_backone,
-                                                           "backbone_pretrained": True,
-                                                           "backbone_modalities": backbone_modalities,
-                                                          
-                                                             # Necks 
-                                                             "necks": [
-                                                                 {
-                                                                     "name": "SelectIndices",
-                                                                     "indices": neck_indices
-                                                                 },
-                                                                 {"name": "ReshapeTokensToImage",
-                                                                  "remove_cls_token": False},  # TerraMind is trained without CLS token, which neads to be specified.
-                                                                 {"name": "LearnedInterpolateToPyramidal"}  # Some decoders like UNet or UperNet expect hierarchical features. Therefore, we need to learn a upsampling for the intermediate embedding layers when using a ViT like TerraMind.
-                                                             ],
-                                                             "decoder": "UNetDecoder",
-                                                             "decoder_channels": [512, 256, 128, 64],
-                                                             },
+                                              model_args=model_args,
                                               model_factory="EncoderDecoderFactory",
                                               plot_on_val=False
                                               )
-    #import ipdb
-    #ipdb.set_trace(context=25)
-    
+    # Fix the input features dimentions in the tim modality sampler to account for Biomassters input data dimensions    
     target_in_features = image_size * num_of_channels
     target_out_features_size = regressor_model.model.encoder.\
         encoder_embeddings["untok_sen2l1c@224"].proj.out_features
@@ -140,8 +180,21 @@ def main(max_epochs,
         encoder_embeddings["untok_sen2l1c@224"].proj = \
             torch.nn.Linear(in_features=target_in_features, 
                             out_features=target_out_features_size,
-                            bias=False)    
+                            bias=False)
+            
+    # Fix the input features dimentions in the tim modality sampler to account for Biomassters input data dimensions
+    if list_of_tim_modalities != list():
+        target_in_features = image_size * num_of_channels
+        target_out_features_size = regressor_model.model.encoder.sampler.model.\
+            encoder_embeddings["untok_sen2l1c@224"].proj.out_features
+        
+        regressor_model.model.encoder.sampler.model.\
+            encoder_embeddings["untok_sen2l1c@224"].proj = \
+                torch.nn.Linear(in_features=target_in_features, 
+                                out_features=target_out_features_size,
+                                bias=False)  
     
+    #ipdb.set_trace(context=25)
     
     root = data_path
     
@@ -164,7 +217,7 @@ def main(max_epochs,
                                               batch_size=batch_size,
                                               output_format="terratorch")
     
-    pl.seed_everything(0)
+    pl.seed_everything(seed)
     
     now = datetime.now()
     dt_string = now.strftime("%d_%m_%Y__%H_%M_%S")
