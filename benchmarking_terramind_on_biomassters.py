@@ -222,19 +222,20 @@ def main(max_epochs,
     now = datetime.now()
     dt_string = now.strftime("%d_%m_%Y__%H_%M_%S")
 
-    path_to_save_logs = (
-        logs_path
-        + "/"
-        + terramind_backone
-        + "/"
-        "freeze_backbone_" + str(freeze_the_backbone)
-        + "/"
-        + sensor
-        + "/"
-        + str(max_epochs)
-        + "/"
-        + dt_string
-    )
+    path_to_logs_local = logs_path + "/" + terramind_backone + "/freeze_backbone_" + str(freeze_the_backbone) \
+        + "/"+ sensor + "/" + str(max_epochs) + "/" + dt_string
+    if list_of_tim_modalities == list():
+        path_to_logs_local = logs_path + "/" + terramind_backone + "/freeze_backbone_" + str(freeze_the_backbone) \
+            + "/"+ sensor + "/" + str(max_epochs) + "/" + dt_string
+    else:
+        path_to_logs_local = logs_path + "/" + terramind_backone + "/freeze_backbone_" + str(freeze_the_backbone) \
+            + "/"+ sensor + "/ltim"
+
+        temporary_str = ""
+        path_to_logs_local += temporary_str.join("_" + tim_i for tim_i in list_of_tim_modalities)
+        path_to_logs_local += "/"+ str(max_epochs) + "/" + dt_string
+        
+    path_to_save_logs = path_to_logs_local
     
     
     # # By default, TerraTorch saves the model with the best validation loss. You can overwrite this by defining a custom ModelCheckpoint, e.g., saving the model with the highest validation mIoU.
