@@ -13,7 +13,6 @@ batch_size=32
 dataset=/dss/dsshome1/04/di38jul/swattainer/temporary_rene/biomassters/
 log_dir=../../results/benchmkark/
 
-
 if [ $freeze_backbone_i -gt 0 ]
 then
     python ../../benchmarking_terramind_on_biomassters.py \
