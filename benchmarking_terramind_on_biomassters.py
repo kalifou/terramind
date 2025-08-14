@@ -120,7 +120,7 @@ def main(max_epochs,
     for tim_i in list_of_tim_modalities:
         assert tim_i in TIM_MODALITIES_LIST
     
-    num_of_channels = 10
+    num_of_channels = 12
     image_size = 256
     
     
@@ -129,10 +129,12 @@ def main(max_epochs,
     elif sensor == "s1":
         num_of_channels = 4
         backbone_modalities = ["S1GRD"]
-    else:
+    elif sensor == "fusion":
         num_of_channels + 4
         backbone_modalities = ["S2L1C", "S1GRD"]
-        
+    else:
+        pass
+    
     if backbone_size == "base":
         neck_indices = [2, 5, 8, 11] # indices for terramind_v1_base
     elif backbone_size == "large":
