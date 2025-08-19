@@ -125,13 +125,13 @@ def main(max_epochs,
     
     
     if sensor == "s2":
-        backbone_modalities = ["S2L1C"]
+        backbone_modalities = ["S2L2A"]
     elif sensor == "s1":
         num_of_channels = 4
         backbone_modalities = ["S1GRD"]
     elif sensor == "fusion":
         num_of_channels + 4
-        backbone_modalities = ["S2L1C", "S1GRD"]
+        backbone_modalities = ["S2L2A", "S1GRD"]
     else:
         pass
     
@@ -175,11 +175,28 @@ def main(max_epochs,
                                               )
     # Fix the input features dimentions in the tim modality sampler to account for Biomassters input data dimensions    
     target_in_features = image_size * num_of_channels
+
+    sensor_key_for_embeddings = "untok_sen2l2a@224"
+    
+    if backbone_modalities == ["S2L2A"]:
+        sensor_key_for_embeddings = "untok_sen2l2a@224"
+
+    elif backbone_modalities == ["S2L1C"]:
+        sensor_key_for_embeddings = "untok_sen2l1c@224"
+
+    elif backbone_modalities == ["S1GRD"]:
+        sensor_key_for_embeddings = "untok_sen1grd@224"
+
+    else:
+        pass
+    
+    #ipdb.set_trace(context=150)
+    
     target_out_features_size = regressor_model.model.encoder.\
-        encoder_embeddings["untok_sen2l1c@224"].proj.out_features
+        encoder_embeddings[sensor_key_for_embeddings].proj.out_features
     
     regressor_model.model.encoder.\
-        encoder_embeddings["untok_sen2l1c@224"].proj = \
+        encoder_embeddings[sensor_key_for_embeddings].proj = \
             torch.nn.Linear(in_features=target_in_features, 
                             out_features=target_out_features_size,
                             bias=False)
@@ -188,10 +205,10 @@ def main(max_epochs,
     if list_of_tim_modalities != list():
         target_in_features = image_size * num_of_channels
         target_out_features_size = regressor_model.model.encoder.sampler.model.\
-            encoder_embeddings["untok_sen2l1c@224"].proj.out_features
+            encoder_embeddings[sensor_key_for_embeddings].proj.out_features
         
         regressor_model.model.encoder.sampler.model.\
-            encoder_embeddings["untok_sen2l1c@224"].proj = \
+            encoder_embeddings[sensor_key_for_embeddings].proj = \
                 torch.nn.Linear(in_features=target_in_features, 
                                 out_features=target_out_features_size,
                                 bias=False)  
