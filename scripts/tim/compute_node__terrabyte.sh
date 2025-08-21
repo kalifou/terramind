@@ -19,7 +19,7 @@ python ../../benchmarking_terramind_on_biomassters.py \
        -tst\
        -sd 1\
        -fzb \
-       -sr s2 \
+       -sr $finetuning_sensor \
        -ltim $list_tim_sensor_i\
        -bcsz  $backbone_size \
        -me $max_epoch_i \
