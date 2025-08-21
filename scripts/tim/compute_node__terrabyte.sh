@@ -5,9 +5,10 @@ source activate base
 conda activate gruenblick_terramind
 
 list_tim_sensor_i=$1
+finetuning_sensor=$2
 backbone_size=base
 
-max_epoch_i=50
+max_epoch_i=2
 batch_size=32
 dataset=/dss/dsshome1/04/di38jul/swattainer/temporary_rene/biomassters/
 log_dir=../../results/benchmkark_tim/
@@ -15,6 +16,7 @@ log_dir=../../results/benchmkark_tim/
 echo "list of backbones: "$list_tim_sensor_i
 
 python ../../benchmarking_terramind_on_biomassters.py \
+       -tst\
        -sd 1\
        -fzb \
        -sr s2 \
