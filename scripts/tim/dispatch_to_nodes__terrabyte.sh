@@ -7,7 +7,7 @@ for funetuning_sensor_i in s1 s2; do
     for tim_sensor_i in sen1 dem ndvi lulc; do
         sbatch login_node__terrabyte.sh $tim_sensor_i $funetuning_sensor_i
     done
-
+done
 
 
 funetuning_sensor_i=s2
