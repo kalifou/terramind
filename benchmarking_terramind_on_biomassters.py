@@ -23,6 +23,9 @@ from terratorch.tasks import PixelwiseRegressionTask
 
 from lightning.pytorch.callbacks import RichProgressBar
 
+from training_utils import CocoaMiningDataModule, CocoaMiningTask, FlopsCallback, GPUHoursCallback, PeakMemoryCallback
+
+
 TIM_MODALITIES_LIST = ['sen2', 'sen1', 'caption', 'sen1rtc', 
                        'dem', 'lulc', 'ndvi', 'caption', 'coords'
                        ]
@@ -266,6 +269,18 @@ def main(max_epochs,
         save_weights_only=True,
     )
     
+    
+    gpuHoursCb = GPUHoursCallback()
+    peakMemoryCb = PeakMemoryCallback()
+    flopsCb = FlopsCallback(input_shape=(1, num_of_channels, 256, 256))
+
+    list_callbacks = [checkpoint_callback, 
+                       RichProgressBar(leave=True),
+                       flopsCb]
+    
+    if torch.cuda.is_available():
+        list_callbacks += [gpuHoursCb, peakMemoryCb]
+    
     # Lightning Trainer
     trainer = pl.Trainer(
         accelerator="auto",
@@ -273,16 +288,24 @@ def main(max_epochs,
         logger=True,  # Uses TensorBoard by default
         max_epochs=max_epochs,  # For demos
         log_every_n_steps=1,
-        callbacks=[checkpoint_callback, RichProgressBar(leave=True)],
+        callbacks=list_callbacks,
         default_root_dir=path_to_save_logs,
     )
     
-    trainer.fit(regressor_model, datamodule=local_datamodule)
+    train_metrics = trainer.fit(regressor_model, datamodule=local_datamodule)
 
-    trainer.test(regressor_model,
+    train_metrics = trainer.callback_metrics
+    print("\n\nTraining metrics:")
+    for key, value in train_metrics.items():
+        print(f"{key}: {value}")
+
+    test_results = trainer.test(regressor_model,
                  datamodule=local_datamodule
                  )
-
+    
+    
+    
+    #ipdb.set_trace(context=22)
     print("Finetuning and evaluation completed!")
 
 if __name__ == "__main__":
