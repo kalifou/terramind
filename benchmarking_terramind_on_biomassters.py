@@ -6,24 +6,17 @@ Created on Wed Jul  2 14:42:30 2025
 @author: trao_ka
 """
 import ipdb
-
+import json
 import click
 from datetime import datetime
 
-# from terratorch.registry import BACKBONE_REGISTRY
-from terratorch.models import EncoderDecoderFactory
 from grunblick import BiomasstersDataModule
-from grunblick.utils import get_dataloaders
 
 import torch
-from terratorch.registry import BACKBONE_REGISTRY, TERRATORCH_BACKBONE_REGISTRY, TERRATORCH_DECODER_REGISTRY
-
 import lightning.pytorch as pl
 from terratorch.tasks import PixelwiseRegressionTask
-
 from lightning.pytorch.callbacks import RichProgressBar
-
-from training_utils import CocoaMiningDataModule, CocoaMiningTask, FlopsCallback, GPUHoursCallback, PeakMemoryCallback
+from training_utils import FlopsCallback, GPUHoursCallback, PeakMemoryCallback
 
 
 TIM_MODALITIES_LIST = ['sen2', 'sen1', 'caption', 'sen1rtc', 
@@ -292,20 +285,60 @@ def main(max_epochs,
         default_root_dir=path_to_save_logs,
     )
     
-    train_metrics = trainer.fit(regressor_model, datamodule=local_datamodule)
+    _ = trainer.fit(regressor_model, datamodule=local_datamodule)
 
     train_metrics = trainer.callback_metrics
+    train_metrics["g_flops"] = flopsCb.gflops
+    if torch.cuda.is_available():
+        train_metrics["gpu_hours"] = gpuHoursCb.gpu_hours
+        train_metrics["peak_memory"] = peakMemoryCb.peak_gb
+        
     print("\n\nTraining metrics:")
     for key, value in train_metrics.items():
-        print(f"{key}: {value}")
-
-    test_results = trainer.test(regressor_model,
-                 datamodule=local_datamodule
-                 )
+        print(f" - {key}: {value}.")
+    print("\n.")
+        
+    
+    _ = trainer.test(regressor_model, 
+                     datamodule=local_datamodule
+                     )
+    
+    test_metrics = trainer.callback_metrics
+    test_metrics["g_flops"] = flopsCb.gflops
+    if torch.cuda.is_available():
+        test_metrics["gpu_hours"] = gpuHoursCb.gpu_hours
+        test_metrics["peak_memory"] = peakMemoryCb.peak_gb
+        
+    print("\n\nTesting metrics:")
+    for key, value in test_metrics.items():
+        test_metrics[key] = float(test_metrics[key])
+        print(f" - {key}: {value}.")
+    print("\n.")
+    
+    config_experiments  = dict()
+    config_experiments["sensor"] = sensor
+    config_experiments["max_epochs"] = max_epochs
+    config_experiments["batch_size"] = batch_size
+    config_experiments["test_mode"] = int(test_mode)
+    config_experiments["Thinking in Modality (TiM)"] = list_of_tim_modalities
+    config_experiments["freeze_the_backbone"] = int(freeze_the_backbone)
+    config_experiments["backbone_size:"] = backbone_size
+    config_experiments["seed"] = int(seed)
+    config_experiments["data_path"] = data_path
+    
+    ipdb.set_trace(context=25)
+    with open(
+        path_to_save_logs + "/" + "config_experiments.json", "w"
+    ) as json_file:
+        json.dump(config_experiments, json_file)
+    
+    with open(
+        path_to_save_logs + "/" + "test_metrics.json", "w"
+    ) as json_file:
+        json.dump(test_metrics, json_file)
     
     
     
-    #ipdb.set_trace(context=22)
     print("Finetuning and evaluation completed!")
 
 if __name__ == "__main__":
