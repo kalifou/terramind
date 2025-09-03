@@ -326,7 +326,6 @@ def main(max_epochs,
     config_experiments["seed"] = int(seed)
     config_experiments["data_path"] = data_path
     
-    ipdb.set_trace(context=25)
     with open(
         path_to_save_logs + "/" + "config_experiments.json", "w"
     ) as json_file:
